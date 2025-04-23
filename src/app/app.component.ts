@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild, viewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
@@ -9,4 +9,17 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   title = 'goal-tracker';
+  @ViewChild("loginModal") loginModal!: ElementRef;
+
+  openModal() {
+    if(this.loginModal) {
+      this.loginModal.nativeElement.style.display = 'block';
+    }
+  }
+
+  closeModal() {
+    if(this.loginModal) {
+      this.loginModal.nativeElement.style.display = 'none';
+    }
+  }
 }
