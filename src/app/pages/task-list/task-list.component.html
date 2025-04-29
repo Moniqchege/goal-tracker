@@ -1,1 +1,88 @@
-<p>task-list works!</p>
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="fw-bold">Task Planner</h1>
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#taskModal">
+        <i class="fas fa-plus me-2"></i>New Task
+      </button>
+    </div>
+  
+    <div class="row">
+      <ng-container *ngFor="let frequency of ['daily', 'weekly', 'monthly']">
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 task-card">
+            <div
+              class="card-header text-white"
+              [ngClass]="{
+                'bg-primary': frequency === 'daily',
+                'bg-success': frequency === 'weekly',
+                'bg-warning': frequency === 'monthly'
+              }"
+            >
+              {{ frequency | titlecase }} Tasks
+            </div>
+            <div class="card-body">
+              <div class="task-item" *ngFor="let task of getTasksByFrequency(frequency)">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    aria-label="checkbox"
+                    [checked]="task.completed"
+                    (change)="toggleCompleted(task.id)"
+                    [id]="task.id"
+                  />
+                  <label class="form-check-label" [for]="task.id">{{ task.title }}</label>
+                </div>
+                <span class="badge"
+                  [ngClass]="{
+                    'bg-info': frequency === 'daily',
+                    'bg-success': frequency === 'weekly',
+                    'bg-warning': frequency === 'monthly'
+                  }"
+                >
+                  {{ frequency | titlecase }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  
+  <!-- Task Modal -->
+  <div class="modal fade" id="taskModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Create New Task</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="mb-3">
+              <label for="task-title" class="form-label">Task Title</label>
+              <input id="task-title" [(ngModel)]="newTask.title" name="title" type="text" class="form-control" required />
+            </div>
+            <div class="mb-3">
+              <label for="frequency" class="form-label">Frequency</label>
+              <select id="frequency" [(ngModel)]="newTask.frequency" name="frequency" class="form-select">
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="dueDate" class="form-label">Due Date</label>
+              <input id="dueDate" [(ngModel)]="newTask.dueDate" name="dueDate" type="date" class="form-control" />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" (click)="createTask()">Create Task</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  

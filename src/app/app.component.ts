@@ -42,8 +42,8 @@ export class AppComponent implements OnInit {
   http = inject(HttpClient);
 
   constructor(private router: Router) {
-    localStorage.removeItem('users');
-    localStorage.removeItem('loggedInUser');
+    // localStorage.removeItem('users');
+    // localStorage.removeItem('loggedInUser');
   }
 
   ngOnInit() {

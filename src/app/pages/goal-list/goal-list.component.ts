@@ -23,9 +23,8 @@ export class GoalListComponent {
     description: '',
     progress: 0,
     milestones: [],
+    status: 'Pending',
   };
-
-  newMilestone = '';
 
   constructor(private goalsService: GoalsService) {}
 
@@ -33,22 +32,9 @@ export class GoalListComponent {
     this.goals = this.goalsService.getGoals();
   }
 
-  addMilestone() {
-    if (this.newMilestone.trim()) {
-      this.newGoal.milestones.push({
-        name: this.newMilestone,
-        status: 'Pending',
-      });
-      this.newMilestone = '';
-    }
-  }
-
-  removeMilestone(index: number) {
-    this.newGoal.milestones.splice(index, 1);
-  }
-
   addGoal() {
     this.newGoal.progress = this.calculateProgress(this.newGoal);
+    console.log('New Goal Status:', this.newGoal.status);
     this.goalsService.addGoal({ ...this.newGoal });
     this.goals = this.goalsService.getGoals();
     this.resetForm();
@@ -57,18 +43,15 @@ export class GoalListComponent {
     const modalInstance =
       Modal.getInstance(modalElement) || new Modal(modalElement);
     modalInstance.hide();
-
-    this.newGoal.progress = this.calculateProgress(this.newGoal);
   }
 
   deleteGoal(goalToDelete: Goal) {
-    const index = this.goals.findIndex(goal => goal === goalToDelete);
+    const index = this.goals.findIndex((goal) => goal === goalToDelete);
     if (index !== -1) {
       this.goalsService.deleteGoal(index);
       this.goals = this.goalsService.getGoals();
     }
   }
-  
 
   openModal() {
     const modalElement = this.goalModal.nativeElement;
@@ -80,29 +63,16 @@ export class GoalListComponent {
   }
 
   calculateProgress(goal: Goal): number {
-    const { milestones, startDate, targetDate } = goal;
-
-    if (!milestones.length || milestones.every((m) => m.status === 'Pending')) {
-      return 0;
+    if (goal.status === 'Completed') return 100;
+    if (goal.status === 'In Progress') {
+      const totalDays = this.getDaysBetween(goal.startDate, goal.targetDate);
+      const elapsedDays = this.getDaysBetween(
+        goal.startDate,
+        new Date().toISOString().split('T')[0]
+      );
+      return Math.min(100, Math.round((elapsedDays / totalDays) * 100));
     }
-
-    let total = 0;
-
-    const totalDays = this.getDaysBetween(startDate, targetDate);
-
-    milestones.forEach((m) => {
-      if (m.status === 'Completed') {
-        total += 1;
-      } else if (m.status === 'In Progress') {
-        const elapsedDays = this.getDaysBetween(
-          startDate,
-          new Date().toISOString().split('T')[0]
-        );
-        total += elapsedDays / totalDays;
-      }
-    });
-
-    return Math.round((total / milestones.length) * 100);
+    return 0;
   }
 
   getDaysBetween(start: string, end: string): number {
@@ -112,26 +82,22 @@ export class GoalListComponent {
     return Math.max(1, Math.ceil(diff / (1000 * 60 * 60 * 24)));
   }
 
-  getProgressColor(startDate: string, targetDate: string): any {
-    const totalDays = this.getDaysBetween(startDate, targetDate);
-    const elapsedDays = this.getDaysBetween(
-      startDate,
-      new Date().toISOString().split('T')[0]
-    );
-
-    const ratio = Math.min(1, elapsedDays / totalDays);
-
-    const r = 255;
-    const g = Math.round(200 - 100 * ratio);
-    const b = 0;
-
-    const color = `rgb(${r}, ${g}, ${b})`;
-
-    return {
-      backgroundColor: color,
-      color: '#fff',
-    };
+  getStatusStyle(status: string): any {
+    switch (status?.trim()) {
+      case 'Pending':
+        return { backgroundColor: '#6c757d', color: '#fff' }; 
+      case 'Completed':
+        return { backgroundColor: '#28a745', color: '#fff' }; 
+      case 'In Progress':
+        return {
+          background: 'linear-gradient(45deg, #FFA500, #FF8C00)', 
+          color: '#fff',
+        };
+      default:
+        return { backgroundColor: '#dc3545', color: '#fff' }; 
+    }
   }
+  
 
   resetForm() {
     this.newGoal = {
@@ -141,7 +107,7 @@ export class GoalListComponent {
       description: '',
       progress: 0,
       milestones: [],
+      status: 'Pending',
     };
-    this.newMilestone = '';
   }
 }

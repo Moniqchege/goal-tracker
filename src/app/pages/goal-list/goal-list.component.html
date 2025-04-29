@@ -12,38 +12,27 @@
         <div class="card-body">
           <h5 class="card-title">{{ goal.title }}</h5>
           <div class="progress mb-3">
-            <div class="progress-bar" [style.width.%]="goal.progress">
+            <div
+              class="progress-bar"
+              [class.pending]="goal.status === 'Pending'"
+              [class.completed]="goal.status === 'Completed'"
+              [class.in-progress]="goal.status === 'In Progress'"
+              [style.width.%]="goal.progress"
+            >
               {{ goal.progress }}%
             </div>
           </div>
-          <h6 *ngIf="goal.milestones.length" class="card-subtitle mb-3">
-            Milestones:
-          </h6>
-          <ul class="list-group" *ngIf="goal.milestones.length">
-            <li
-              class="list-group-item d-flex justify-content-between align-items-center"
-              *ngFor="let m of goal.milestones"
-            >
-              {{ m.name }}
-              <span
-                class="badge rounded-pill"
-                [ngClass]="{
-                  'bg-success': m.status === 'Completed',
-                  'bg-secondary': m.status === 'Pending'
-                }"
-                [ngStyle]="
-                  m.status === 'In Progress'
-                    ? getProgressColor(goal.startDate, goal.targetDate)
-                    : {}
-                "
-              >
-                {{ m.status }}
-              </span>
-            </li>
-          </ul>
+
+          <span
+            class="badge rounded-pill px-3 py-2"
+            [ngStyle]="getStatusStyle(goal.status)"
+          >
+            {{ goal.status }}
+          </span>
+
           <button
-          class="btn btn-sm btn-danger position-absolute bottom-0 end-0 m-1"
-          (click)="deleteGoal(goal)"
+            class="btn btn-sm btn-danger position-absolute bottom-0 end-0 m-1"
+            (click)="deleteGoal(goal)"
           >
             Delete
           </button>
@@ -62,110 +51,72 @@
           type="button"
           class="btn-close"
           data-bs-dismiss="modal"
-          aria-label="close"
+          aria-label="Close"
         ></button>
       </div>
       <div class="modal-body">
         <form>
+          <div class="mb-3">
+            <label class="form-label">Goal Title</label>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="newGoal.title"
+              name="title"
+              aria-label="Title"
+              required
+            />
+          </div>
+
           <div class="row">
-            <div class="col-7">
+            <div class="col-6">
               <div class="mb-3">
-                <label class="form-label">Goal Title</label>
+                <label class="form-label">Start Date</label>
                 <input
-                  aria-label="Title"
-                  type="text"
+                  type="date"
                   class="form-control"
-                  [(ngModel)]="newGoal.title"
-                  name="title"
-                  required
+                  [(ngModel)]="newGoal.startDate"
+                  name="startDate"
+                  aria-label="startDate"
                 />
               </div>
-              <div class="row">
-                <div class="col-6">
-                  <div class="mb-3">
-                    <label class="form-label">Start Date</label>
-                    <input
-                      aria-label="Start Date"
-                      type="date"
-                      class="form-control"
-                      [(ngModel)]="newGoal.startDate"
-                      name="startDate"
-                    />
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="mb-3">
-                    <label class="form-label">Target Date</label>
-                    <input
-                      aria-label="Target Date"
-                      type="date"
-                      class="form-control"
-                      [(ngModel)]="newGoal.targetDate"
-                      name="targetDate"
-                    />
-                  </div>
-                </div>
-              </div>
+            </div>
+            <div class="col-6">
               <div class="mb-3">
-                <label class="form-label">Description</label>
-                <textarea
-                  aria-label="Description"
+                <label class="form-label">Target Date</label>
+                <input
+                  type="date"
                   class="form-control"
-                  [(ngModel)]="newGoal.description"
-                  name="description"
-                ></textarea>
+                  [(ngModel)]="newGoal.targetDate"
+                  name="targetDate"
+                  aria-label="targetDate"
+                />
               </div>
             </div>
-            <div class="col-5">
-              <div class="mb-3">
-                <label class="form-label">Milestones</label>
-                <div
-                  class="input-group mb-2"
-                  *ngFor="let milestone of newGoal.milestones; let i = index"
-                >
-                  <input
-                    type="text"
-                    aria-label="Milestones"
-                    class="form-control"
-                    [(ngModel)]="milestone.name"
-                    name="milestone-{{ i }}-name"
-                  />
-                  <select
-                    aria-label="Select"
-                    class="form-select"
-                    [(ngModel)]="milestone.status"
-                    name="milestone-{{ i }}-status"
-                  >
-                    <option value="Pending">Pending</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Completed">Completed</option>
-                  </select>
-                  <button
-                    class="btn btn-outline-danger"
-                    type="button"
-                    (click)="removeMilestone(i)"
-                  >
-                    −
-                  </button>
-                </div>
-                <div class="input-group">
-                  <input
-                    type="text"
-                    class="form-control"
-                    [(ngModel)]="newMilestone"
-                    name="newMilestone"
-                    placeholder="Milestone"
-                  />
-                  <button
-                    class="btn btn-outline-secondary"
-                    type="button"
-                    (click)="addMilestone()"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea
+              class="form-control"
+              [(ngModel)]="newGoal.description"
+              name="description"
+              aria-label="Description"
+            ></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select
+              class="form-select"
+              [(ngModel)]="newGoal.status"
+              name="status"
+              aria-label="status"
+            >
+              <option value="Pending">Pending</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+            </select>
           </div>
         </form>
       </div>

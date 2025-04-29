@@ -10,4 +10,5 @@ export interface Goal {
     targetDate: string;
     progress: number;
     milestones: Milestone[];
+    status: 'Pending' | 'In Progress' | 'Completed';
 }
