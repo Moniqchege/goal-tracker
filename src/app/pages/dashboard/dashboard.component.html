@@ -1,1 +1,78 @@
-<p>dashboard works!</p>
+<div class="container py-5">
+    <h1 class="fw-bold mb-4">Dashboard</h1>
+  
+    <!-- Stats -->
+    <div class="row mb-5">
+      <div class="col-md-3 mb-4" *ngFor="let stat of stats">
+        <div class="card h-100">
+          <div class="card-body text-center">
+            <i class="{{ stat.icon }} fa-3x mb-3" [ngClass]="stat.color"></i>
+            <h5 class="card-title">{{ stat.title }}</h5>
+            <h2 class="card-text">{{ stat.value }}</h2>
+            <div class="small text-muted">{{ stat.note }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Chart and Table -->
+    <div class="row mb-5">
+      <div class="col-md-8 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Task Completion Trend</h5>
+            <div class="table-responsive">
+              <table class="table table-bordered table-fixed mb-0">
+                <thead>
+                  <tr class="text-center">
+                    <th>Task Name</th>
+                    <th *ngFor="let day of ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']">{{ day }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let task of tasks; let i = index">
+                    <td>
+                      <i class="bi me-2" [ngClass]="task.icon"></i>
+                      {{ task.name }}
+                    </td>
+                    <td *ngFor="let completed of task.days; let j = index"
+                        class="text-center task-cell"
+                        [class.completed]="completed"
+                        (click)="toggleDay(i, j)">
+                      <i *ngIf="completed" class="bi bi-check-lg"></i>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Chart Placeholder -->
+      <div class="col-md-4 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Goal Progress</h5>
+            <canvas id="goalProgressChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Recent Activity -->
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Recent Activity</h5>
+        <div class="list-group">
+          <div class="list-group-item" *ngFor="let activity of recentActivities">
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1">{{ activity.title }}</h6>
+              <small class="text-muted">{{ activity.time }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
