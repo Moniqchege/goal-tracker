@@ -42,9 +42,7 @@ export class AppComponent {
   }
 
   onRegister(){
-    debugger
     this.http.post("https://freeapi.miniprojectideas.com/api/Goals/createNewUser", this.registerObj).subscribe((res:any) => {
-      debugger
       alert("Registration Successful")
     }, error=>{
      })
