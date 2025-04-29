@@ -11,19 +11,22 @@
     >
       ☰
     </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
+    <div class="collapse navbar-collapse" id="navbarNav" #navbarNav>
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
-          <a class="nav-link active" href="index.html">Dashboard</a>
+          <a class="nav-link active" routerLink="/dashboard" (click)="closeNavbar()">Dashboard</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="tasks.html">Tasks</a>
+          <a class="nav-link" routerLink="/new-goal" (click)="closeNavbar()">New Goal</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="goals.html">Goals</a>
+          <a class="nav-link" routerLink="/goal-list" (click)="closeNavbar()">Goals</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="reminders.html">Reminders</a>
+          <a class="nav-link" routerLink="/task-list" (click)="closeNavbar()">Tasks</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/reminders" (click)="closeNavbar()">Reminders</a>
         </li>
       </ul>
       <button class="btn btn-outline-light" (click)="openModal()">
@@ -45,6 +48,7 @@
             class="btn-close position-absolute top-0 end-0 m-3"
             (click)="closeModal()"
             data-bs-dismiss="modal"
+            aria-label="close"
           ></button>
         </div>
         @if (isLoginFormVisible()) {
@@ -52,6 +56,8 @@
           <div class="mb-3">
             <input
               type="email"
+              [(ngModel)]="loginObj.email"
+              name="email"
               class="form-control"
               placeholder="Email"
               required
@@ -60,12 +66,14 @@
           <div class="mb-3">
             <input
               type="password"
+              [(ngModel)]="loginObj.password"
+              name="password"
               class="form-control"
               placeholder="Password"
               required
             />
           </div>
-          <button type="submit" class="btn btn-primary w-100 mb-3">
+          <button type="submit" class="btn btn-primary w-100 mb-3" (click)="onLogin()">
             Login
           </button>
           <p class="text-center">
@@ -88,8 +96,8 @@
           <div class="mb-3">
             <input
               type="email"
-              [(ngModel)]="registerObj.emailId"
-              name="emailId"
+              [(ngModel)]="registerObj.email"
+              name="email"
               class="form-control"
               placeholder="Email"
               required
