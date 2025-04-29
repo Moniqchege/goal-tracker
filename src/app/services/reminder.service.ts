@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 import { Reminder } from '../models/reminder.model';
 
-const STORAGE_KEY = 'reminders';
-
 @Injectable({
   providedIn: 'root',
 })
@@ -11,16 +9,12 @@ export class ReminderService {
   private reminders: Reminder[] = [];
 
   constructor() {
-    this.loadFromLocalStorage();
-  }
-
-  private loadFromLocalStorage() {
-    const data = localStorage.getItem(STORAGE_KEY);
-    this.reminders = data ? JSON.parse(data) : [];
+    const stored = localStorage.getItem('reminders');
+    if (stored) this.reminders = JSON.parse(stored);
   }
 
   private saveToLocalStorage() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.reminders));
+    localStorage.setItem('reminders', JSON.stringify(this.reminders));
   }
 
   getReminders(): Reminder[] {
@@ -28,7 +22,8 @@ export class ReminderService {
   }
 
   addReminder(reminder: Omit<Reminder, 'id'>) {
-    this.reminders.push({ ...reminder, id: uuidv4() });
+    const newReminder = { ...reminder, id: uuidv4() };
+    this.reminders.push(newReminder);
     this.saveToLocalStorage();
   }
 

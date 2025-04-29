@@ -1,6 +1,6 @@
 export interface Reminder {
     id: string;
     title: string;
-    dateTime: string;
+    datetime: string;
     notes?: string;
 }
