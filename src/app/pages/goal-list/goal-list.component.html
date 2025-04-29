@@ -1,1 +1,180 @@
-<p>goal-list works!</p>
+<div class="container py-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="fw-bold">Goals</h1>
+    <button class="btn btn-primary" (click)="openModal()">
+      <i class="fas fa-plus me-2"></i>New Goal
+    </button>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mb-4" *ngFor="let goal of goals">
+      <div class="card goal-card position-relative">
+        <div class="card-body">
+          <h5 class="card-title">{{ goal.title }}</h5>
+          <div class="progress mb-3">
+            <div class="progress-bar" [style.width.%]="goal.progress">
+              {{ goal.progress }}%
+            </div>
+          </div>
+          <h6 *ngIf="goal.milestones.length" class="card-subtitle mb-3">
+            Milestones:
+          </h6>
+          <ul class="list-group" *ngIf="goal.milestones.length">
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center"
+              *ngFor="let m of goal.milestones"
+            >
+              {{ m.name }}
+              <span
+                class="badge rounded-pill"
+                [ngClass]="{
+                  'bg-success': m.status === 'Completed',
+                  'bg-secondary': m.status === 'Pending'
+                }"
+                [ngStyle]="
+                  m.status === 'In Progress'
+                    ? getProgressColor(goal.startDate, goal.targetDate)
+                    : {}
+                "
+              >
+                {{ m.status }}
+              </span>
+            </li>
+          </ul>
+          <button
+          class="btn btn-sm btn-danger position-absolute bottom-0 end-0 m-1"
+          (click)="deleteGoal(goal)"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div #goalModal class="modal fade" id="goalModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Create New Goal</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="row">
+            <div class="col-7">
+              <div class="mb-3">
+                <label class="form-label">Goal Title</label>
+                <input
+                  aria-label="Title"
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="newGoal.title"
+                  name="title"
+                  required
+                />
+              </div>
+              <div class="row">
+                <div class="col-6">
+                  <div class="mb-3">
+                    <label class="form-label">Start Date</label>
+                    <input
+                      aria-label="Start Date"
+                      type="date"
+                      class="form-control"
+                      [(ngModel)]="newGoal.startDate"
+                      name="startDate"
+                    />
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="mb-3">
+                    <label class="form-label">Target Date</label>
+                    <input
+                      aria-label="Target Date"
+                      type="date"
+                      class="form-control"
+                      [(ngModel)]="newGoal.targetDate"
+                      name="targetDate"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea
+                  aria-label="Description"
+                  class="form-control"
+                  [(ngModel)]="newGoal.description"
+                  name="description"
+                ></textarea>
+              </div>
+            </div>
+            <div class="col-5">
+              <div class="mb-3">
+                <label class="form-label">Milestones</label>
+                <div
+                  class="input-group mb-2"
+                  *ngFor="let milestone of newGoal.milestones; let i = index"
+                >
+                  <input
+                    type="text"
+                    aria-label="Milestones"
+                    class="form-control"
+                    [(ngModel)]="milestone.name"
+                    name="milestone-{{ i }}-name"
+                  />
+                  <select
+                    aria-label="Select"
+                    class="form-select"
+                    [(ngModel)]="milestone.status"
+                    name="milestone-{{ i }}-status"
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                  </select>
+                  <button
+                    class="btn btn-outline-danger"
+                    type="button"
+                    (click)="removeMilestone(i)"
+                  >
+                    −
+                  </button>
+                </div>
+                <div class="input-group">
+                  <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="newMilestone"
+                    name="newMilestone"
+                    placeholder="Milestone"
+                  />
+                  <button
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    (click)="addMilestone()"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button class="btn btn-primary" (click)="addGoal()">Create Goal</button>
+      </div>
+    </div>
+  </div>
+</div>

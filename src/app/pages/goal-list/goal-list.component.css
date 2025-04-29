@@ -1,0 +1,27 @@
+.goal-card {
+    transition: box-shadow 0.3s;
+    border-radius: 10px;
+  }
+  
+  .goal-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .progress-bar {
+    background-color: #0d6efd;
+  }
+  
+  .modal-content {
+    border-radius: 10px;
+  }
+  
+  .btn-outline-danger {
+    border-radius: 0 5px 5px 0;
+  }
+
+  .badge[style] {
+    background-color: inherit !important;
+    color: #fff !important;
+  }
+  
+  
