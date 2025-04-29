@@ -21,7 +21,7 @@
               {{ frequency | titlecase }} Tasks
             </div>
             <div class="card-body">
-              <div class="task-item" *ngFor="let task of getTasksByFrequency(frequency)">
+              <div class="task-item d-flex justify-content-between align-items-center mb-2" *ngFor="let task of getTasksByFrequency(frequency)">
                 <div class="form-check">
                   <input
                     class="form-check-input"
@@ -33,15 +33,8 @@
                   />
                   <label class="form-check-label" [for]="task.id">{{ task.title }}</label>
                 </div>
-                <span class="badge"
-                  [ngClass]="{
-                    'bg-info': frequency === 'daily',
-                    'bg-success': frequency === 'weekly',
-                    'bg-warning': frequency === 'monthly'
-                  }"
-                >
-                  {{ frequency | titlecase }}
-                </span>
+                <i class="fas fa-trash text-danger" style="cursor: pointer;" (click)="deleteTask(task.id)"></i>
+                
               </div>
             </div>
           </div>

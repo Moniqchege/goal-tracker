@@ -2,25 +2,37 @@ import { Injectable } from '@angular/core';
 import { Task } from '../models/task.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TaskService {
-  private tasks: Task[] = [];
-
-  constructor() { }
+  private localStorageKey = 'taskList';
 
   getTasks(): Task[] {
-    return this.tasks;
+    const storedTasks = localStorage.getItem(this.localStorageKey);
+    return storedTasks ? JSON.parse(storedTasks) : [];
   }
 
   addTask(task: Task): void {
-    this.tasks.push(task);
+    const tasks = this.getTasks();
+    tasks.push(task);
+    this.saveTasks(tasks);
   }
 
-  toggleTaskCompletion(taskId: string):void{
-    const task = this.tasks.find(t => t.id === taskId);
-    if(task){
-      task.completed = !task.completed;
-    }
+  toggleTaskCompletion(id: string): void {
+    const tasks = this.getTasks();
+    const updatedTasks = tasks.map(task =>
+      task.id === id ? { ...task, completed: !task.completed } : task
+    );
+    this.saveTasks(updatedTasks);
   }
+
+  private saveTasks(tasks: Task[]): void {
+    localStorage.setItem(this.localStorageKey, JSON.stringify(tasks));
+  }
+
+  deleteTask(id: string): void {
+    const tasks = this.getTasks().filter(task => task.id !== id);
+    this.saveTasks(tasks);
+  }
+  
 }

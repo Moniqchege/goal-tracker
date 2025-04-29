@@ -57,4 +57,10 @@ export class TaskListComponent {
   toggleCompleted(id: string): void {
     this.taskService.toggleTaskCompletion(id);
   }
+
+  deleteTask(id: string): void {
+    this.taskService.deleteTask(id);
+    this.tasks = this.taskService.getTasks();
+  }
+  
 }
